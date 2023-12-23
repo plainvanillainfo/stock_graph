@@ -1,0 +1,20 @@
+
+#right-bar {
+	right: 0;
+	width: 10%;
+	padding: 0.5em;
+	border-left: 1px solid black;
+}
+
+#main-target {
+	left: 0;
+	width: 100%;
+}
+
+#plot-target {
+	height: 90%;
+}
+
+#date-select-bar {
+	width: 100%;
+}
