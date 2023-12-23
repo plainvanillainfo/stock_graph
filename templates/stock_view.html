@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ symbol_obj.display_name }}: {% if is_today %}Today{% else %}{{ start|date:"Y-m-d" }} - {{ day|date:"Y-m-d" }}{% endif %}{% endblock %}
+
+{% block head %}
+
+{{ data|json_script:"plot_data" }}
+{{ trace_indices|json_script:"trace_indices" }}
+{{ plot_type|json_script:"plot_type" }}
+
+<script>
+
+	const PLOT_TARGET = 'plot-target';
+	const CHANNEL = 'stock_{{ symbol }}';
+	{% if is_today %}
+	const LIVE = true;
+	{% else %}
+	const LIVE = false;
+	{% endif %}
+
+	window.onload = function(elt) {
+		var data = JSON.parse(document.getElementById('plot_data').textContent);
+
+		var layout = {
+			title: '{{ symbol_obj.display_name }}',
+			hovermode: 'x',
+			xaxis: {
+				type: 'date',
+				showspikes: true,
+				spikedash: 'solid',
+				spikemode: 'across+marker',
+				spikethickness: 1,
+				spikesnap: 'cursor',
+				spikecolor: '#222222',
+				rangebreaks: [
+					{
+						pattern: 'hour',
+						bounds: [17, 9],
+					},
+					{
+						pattern: 'day of week',
+						bounds: [6, 1],
+					},
+				],
+				range: ['{{ start }} 09:00:00', '{{ end }} 00:00:00'],
+			},
+			yaxis: {
+				title: '{{ data_display_name }}',
+				autorange: true,
+				type: 'linear',
+				{% if data_display_name == "Price" %}
+				exponentformat: 'none',
+				{% endif %}
+			},
+			yaxis2: {
+				title: '{{ right_axis_display_name }}',
+				{% if right_axis_display_name == "Correlation" %}
+				range: [-1, 1],
+				{% else %}
+				autorange: true,
+				{% endif %}
+				type: 'linear',
+				side: 'right',
+				overlaying: 'y',
+				showgrid: false,
+				exponentformat: 'none',
+			},
+			showlegend: true,
+		};
+
+		chart = Plotly.newPlot('plot-target', data, layout, {responsive: true});
+	};
+
+</script>
+
+<script src="{% static "live.js" %}"></script>
+
+{% endblock %}
+
+{% block main %}
+
+<div class="container-fluid">
+
+	{% include "holiday.html" %}
+
+	<div id="main-target" class="h-100 position-fixed overflow-hidden">
+		{% include "date_select.html" %}
+		<div id="plot-target"></div>
+	</div>
+
+</div>
+
+{% endblock %}

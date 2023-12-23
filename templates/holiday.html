@@ -1,0 +1,9 @@
+{% if is_today and holiday %}
+<div class="alert alert-warning">
+	{% if holiday.status == "closed" %}
+	The market is closed today for {{ holiday.name }}
+	{% elif holiday.status == "early-close" %}
+	The market will close at {{ holiday.close|date:"H:i" }} today for {{ holiday.name }}
+	{% endif %}
+</div>
+{% endif %}

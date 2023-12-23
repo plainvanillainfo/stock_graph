@@ -1,0 +1,19 @@
+<div id="date-select-bar">
+	<form method="GET" action="" class="row row-cols-sm-auto g-3 align-items-center">
+		<div class="col-12">
+			<a class="btn btn-outline-primary btn-sm ms-5 mt-2" href=".">Today</a>
+		</div>
+		<div class="col-12">
+			<input type="text" class="form-control form-control-sm ms-3 mt-2 date-picker" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" placeholder="YYYY-MM-DD" name="latest_day" size="10">
+		</div>
+		<div class="col-12">
+			<button type="submit" class="btn btn-sm btn-outline-primary ms-2 mt-2">View up to this date</button>
+		</div>
+		<div class="col-12">
+			<a class="btn btn-outline-primary btn-sm ms-2 mt-2" href="?latest_day={{ previous_day|date:"Y-m-d" }}">&lt;</a>
+		</div>
+		<div class="col-12">
+			<a class="btn btn-outline-primary btn-sm mt-2" href="?latest_day={{ next_day|date:"Y-m-d" }}">&gt;</a>
+		</div>
+	</form>
+</div>

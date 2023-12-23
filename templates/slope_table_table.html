@@ -1,0 +1,27 @@
+<table class="table mt-3 table-hover slope-table sortable asc" id="slope-table">
+	<colgroup>
+		<col class="col-md-3">
+		<col class="col-md-3">
+		{% if is_today %}<col class="col-md-3">{% endif %}
+		<col class="col-md-3">
+	</colgroup>
+
+	<thead class="table-light">
+		<tr>
+			<th scope="col" class="align-middle">Symbol</th>
+			<th scope="col" class="align-middle">Previous Day Close <br>({{ previous_close|date:"Y-m-d H:i" }})</th>
+			{% if is_today %}<th scope="col" class="align-middle">Previous Day This Minute <br>({{ previous_minute|date:"Y-m-d H:i" }})</th>{% endif %}
+			<th scope="col" class="align-middle">{% if is_today %}Current {% else %}Current Day Close {% endif %}<br>({{ current_minute|date:"Y-m-d H:i" }})</th>
+		</tr>
+	</thead>
+	<tbody class="align-middle">
+		{% for symbol, d in data.items %}
+		<tr>
+			<td><a href="{% url "stock-slope" symbol %}{% if not is_today %}?latest_day={{ day|date:"Y-m-d" }}{% endif %}">{{ d.name }}</a></td>
+			<td class="table-info text-end">{{ d.previous_close }}</td>
+			{% if is_today %}<td class="table-primary text-end">{{ d.previous_minute }}</td>{% endif %}
+			<td class="table-success text-end">{{ d.current }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>

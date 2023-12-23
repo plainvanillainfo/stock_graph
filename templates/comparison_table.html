@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Comparison Table: {% if is_today %}Today{% else %}{{ day|date:"Y-m-d" }}{% endif %}{% endblock %}
+
+{% block body %}
+
+	{% include "holiday.html" %}
+
+	<h1 class="mt-3 mb-3">Comparison Table ({{ table_name }}): {% if is_today %}Today{% else %}{{ day|date:"Y-m-d" }}{% endif %}</h1>
+
+	<form method="GET" action="" class="row row-cols-sm-auto g-3 align-items-center">
+
+		<label for="latest_day" class="col-form-label col-12">Date</label>
+		<div class="col-12">
+			<input type="text" class="form-control form-control-sm date-picker" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" placeholder="YYYY-MM-DD" name="latest_day" size="10" value="{{ day|date:"Y-m-d" }}">
+		</div>
+
+		<label for="start_time" class="col-form-label col-12">Start Time</label>
+		<div class="col-12">
+			<input type="time" class="form-control form-control-sm" name="start_time" value="{{ start_time|date:"H:i" }}"> 
+		</div>
+
+		<label for="end_time" class="col-form-label col-12">End Time</label>
+		<div class="col-12">
+			<input type="time" class="form-control form-control-sm" name="end_time" value="{{ end_time|date:"H:i" }}"> 
+		</div>
+
+		<div class="form-check">
+			<input class="form-check-input" type="checkbox" value="1" name="use_previous_close" id="use_previous_close" {% if use_previous_close %}checked{% endif %}>
+			<label class="form-check-label" for="use_previous_close">
+				Use previous close for price change
+			</label>
+		</div>
+
+		<div class="col-12">
+			<button type="submit" class="btn btn-sm btn-primary">Update Table</button>
+		</div>
+
+	</form>
+
+	<table class="table mt-3 table-hover sortable asc">
+		<colgroup>
+			<col style="width: 10%;">
+			<col style="width: 15%;">
+			<col style="width: 15%;">
+			<col style="width: 10%;">
+			<col style="width: 10%;">
+			<col style="width: 10%;">
+			<col style="width: 10%;">
+			<col style="width: 10%;">
+			<col style="width: 10%;">
+		</colgroup>
+
+		<thead class="table-light">
+			<tr>
+				<th scope="col" class="align-middle" rowspan="2">Symbol</th>
+				<th scope="col" class="align-middle no-sort" rowspan="2">Charts</th>
+				<th scope="col" class="align-middle no-sort" rowspan="2">Correlation Charts</th>
+				<th scope="col" class="align-middle text-center no-sort" colspan="2">Correlation (15 minute)</th>
+				<th scope="col" class="align-middle text-center no-sort" colspan="2">Correlation</th>
+				<th scope="col" class="align-middle" rowspan="2" data-sort-col="7">Slope Value</th>
+				<th scope="col" class="align-middle" rowspan="2" data-sort-col="8">Price Change %</th>
+			</tr>
+			<tr>
+				<th scope="col" class="align-middle" data-sort-col="3">Volume</th>
+				<th scope="col" class="align-middle" data-sort-col="4">Slope</th>
+				<th scope="col" class="align-middle" data-sort-col="5">Volume</th>
+				<th scope="col" class="align-middle" data-sort-col="6">Slope</th>
+			</tr>
+		</thead>
+
+		<tbody class="align-middle">
+			{% for d in data %}
+			<tr>
+				<td>{{ d.name }}</td>
+				<td>
+					<a href="{% url "stock-volume" d.symbol %}{% if not is_today %}?latest_day={{ day|date:"Y-m-d" }}{% endif %}">Volume</a> | 
+					<a href="{% url "stock-slope" d.symbol %}{% if not is_today %}?latest_day={{ day|date:"Y-m-d" }}{% endif %}">Slope</a> 
+				</td>
+				<td>
+					<a href="{% url "stock-correlations-volume" d.symbol %}{% if not is_today %}?latest_day={{ day|date:"Y-m-d" }}{% endif %}">Volume</a> | 
+					<a href="{% url "stock-correlations-slope" d.symbol %}{% if not is_today %}?latest_day={{ day|date:"Y-m-d" }}{% endif %}">Slope</a> | 
+					<a href="{% url "stock-correlations-price" d.symbol %}{% if not is_today %}?latest_day={{ day|date:"Y-m-d" }}{% endif %}">Price</a>
+				</td>
+				<td class="text-end table-info">{{ d.rolling_volume_correlation|floatformat:2 }}</td>
+				<td class="text-end table-success">{{ d.rolling_slope_correlation|floatformat:2 }}</td>
+
+				<td class="text-end table-info">{{ d.volume_correlation|floatformat:2 }}</td>
+				<td class="text-end table-success">{{ d.slope_correlation|floatformat:2 }}</td>
+
+				<td class="text-end table-primary">{{ d.slope_diff }}</td>
+				<td class="text-end table-secondary {% if d.price_diff > 0 %}text-success{% else %}text-danger{% endif %}">{{ d.price_diff|floatformat:2 }}%</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+
+
+{% endblock %}

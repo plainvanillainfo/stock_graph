@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load concat %}
+
+{% block title %}{{ group.name }}: Edit{% endblock %}
+
+{% block body %}
+
+<h1 class="mt-5 mb-4">{{ group.name }}</h1>
+
+<a class="btn btn-outline-primary" href="{% url group_type_name|concat:"-view" group.slug %}">View</a>
+
+<form method="POST" action="{% url group_type_name|concat:"-rename" group.slug %}" class="row row-cols-lg-auto g-3 align-items-center mt-4">
+	{% csrf_token %}
+	<div class="col-12">
+		<input type="text" class="form-control" id="name" name="name" placeholder="Name" size="30"/>
+	</div>
+	<div class="col-12">
+		<button type="submit" class="btn btn-primary">Rename</button>
+	</div>
+</form>
+
+<div class="mt-4">
+	<form method="POST" action="{% url group_type_name|concat:"-delete" group.slug %}" class="row row-cols-lg-auto g-3 align-items-center">
+		{% csrf_token %}
+		<div class="col-12">
+			<button type="submit" class="btn btn-danger">Delete</button>
+		</div>
+	</form>
+</div>
+
+
+{% regroup symbols by get_type_display as type_list %}
+
+<form action="{% url group_type_name|concat:"-update" group.slug %}" method="POST">
+	{% csrf_token %}
+
+	{% for type in type_list %}
+	<h2 class="mt-4">{{ type.grouper }}</h2>
+		<table class="table mt-3 table-hover">
+			<thead class="table-light">
+				<tr>
+					<th scope="col">Name</th>
+					<th scope="col">Include</th>
+				</tr>
+			</thead>
+			<tbody class="align-middle">
+				{% for symbol in type.list %}
+					<tr>
+						<td class="fs-5">{{ symbol.display_name }}</td>
+						<td>
+							<input type="checkbox" name="symbols" value="{{ symbol.symbol }}" {% if symbol.selected %}checked{% endif %}>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endfor %}
+
+	<button type="submit" class="btn btn-lg btn-primary mt-4">Save</button>
+
+</form>
+			
+
+{% endblock %}

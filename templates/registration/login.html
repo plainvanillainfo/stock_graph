@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+{% block nav %}{% endblock %}
+
+
+{% block body %}
+
+	<div class="row justify-content-center">
+		<form class="col-6 text-center" method="POST">
+			{% csrf_token %}
+			{{ form.as_p }}
+			<button type="submit" class="btn btn-primary btn-lg">Login</button>
+		</form>
+	</div>
+
+
+{% endblock %}

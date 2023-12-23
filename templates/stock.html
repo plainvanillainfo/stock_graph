@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}{{ symbol.symbol }}{% endblock %}
+
+{% block body %}
+
+<h1 class="mt-2 display-2">{{ symbol.symbol }}</h1>
+
+<div class="mt-5">
+	<form method="POST" action="{% url "add-days" symbol.symbol %}" class="row row-cols-lg-auto g-3 align-items-center">
+		{% csrf_token %}
+		<div class="col-12">
+			Add the last	
+		</div>
+		<div class="col-12">
+		<input type="number" class="form-control" name="days" size="3" min="0"/>
+		</div>
+
+		<div class="col-12">
+		days	
+		</div>
+		<div class="col-12">
+		<button type="submit" class="btn btn-primary">Add</button>
+		</div>
+	</form>
+</div>
+
+<div class="mt-4">
+	<form method="POST" action="{% url "add-since" symbol.symbol %}" class="row row-cols-lg-auto g-3 align-items-center">
+		{% csrf_token %}
+		<div class="col-12">
+			Add days since
+		</div>
+		<div class="col-12">
+			<input type="text" class="form-control date-picker" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" placeholder="YYYY-MM-DD" name="start_date" />
+		</div>
+
+		<div class="col-12">
+		<button type="submit" class="btn btn-primary">Add</button>
+		</div>
+	</form>
+</div>
+
+
+{% if symbol.active %}
+
+<div class="mt-4">
+	<form method="POST" action="{% url "deactivate-symbol" symbol.symbol %}" class="row row-cols-lg-auto g-3 align-items-center">
+		{% csrf_token %}
+		<div class="col-12">
+			<button type="submit" class="btn btn-danger">Deactivate</button>
+		</div>
+	</form>
+</div>
+
+{% else %}
+
+<div class="mt-4">
+	<form method="POST" action="{% url "activate-symbol" symbol.symbol %}" class="row row-cols-lg-auto g-3 align-items-center">
+		{% csrf_token %}
+		<div class="col-12">
+			<button type="submit" class="btn btn-success">Activate</button>
+		</div>
+	</form>
+</div>
+{% endif %}
+
+
+<div class="mt-4">
+	<form method="POST" action="{% url "set-symbol-colour" symbol.symbol %}" class="row row-cols-lg-auto g-3 align-items-center">
+		{% csrf_token %}
+		<div class="col-12">
+			Choose colour
+		</div>
+		<div class="col-12">
+			<input type="color" class="" name="colour" {% if symbol.colour %}value="{{ symbol.colour }}"{% endif %} />
+		</div>
+
+		<div class="col-12">
+			<button type="submit" class="btn btn-outline-primary">Save</button>
+		</div>
+	</form>
+	<form method="POST" action="{% url "set-symbol-colour" symbol.symbol %}" class="mt-3 row row-cols-lg-auto g-3 align-items-center">
+		{% csrf_token %}
+		<input type="hidden" value="default" name="colour">
+		<div class="col-12">
+			<button type="submit" class="btn btn-outline-primary">Reset to default colour</button>
+		</div>
+	</form>
+
+</div>
+
+
+
+
+{% if days %}
+	<form method="POST" action="{% url "download-multiple" symbol.symbol %}">
+		{% csrf_token %}
+		<table class="table mt-5">
+			<thead class="table-light">
+				<tr>
+					<th scope="col">Day</th>
+					<th scope="col">State</th>
+					<th scope="col">Download Day Data</th>
+					<th scope="col">Select to download</th>
+				</tr>
+			</thead>
+			<tbody class="align-middle">
+				{% for day in days %}
+				<tr class="{% if day.state == "P" %}table-light{% elif day.state == "L" %}table-info{% endif %}">
+						<td>
+							{{ day.day|date:"Y-m-d" }}
+						</td>
+						<td>
+							{{ day.get_state_display }}
+						</td>
+						<td>
+							{% if day.has_data %}
+								<a href="{% url "download-single-day" symbol.symbol day.day %}" class="btn btn-outline-primary btn-sm">Download</a>
+							{% endif %}
+						</td>
+						<td>
+							{% if day.has_data %}
+								<input type="checkbox" name="day" value="{{ day.day|date:"Y-m-d" }}">
+							{% endif %}
+						</td>
+					{% endfor %}
+				
+
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>
+						<button type="submit" class="btn btn-primary">Download Selected</button>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>
+						<a class="btn btn-primary" href="{% url "download-all" symbol.symbol %}">Download All</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class="text-end"></div>
+	</form>
+{% else %}
+<h4 class="mt-5">No days added for this stock</h4>
+{% endif %}
+
+{% endblock %}

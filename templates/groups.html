@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load concat %}
+
+{% block title %}Volume: {{ group_type.label }}s{% endblock %}
+
+{% block body %}
+
+<h1 class="mt-5">{{ group_type.label }}s</h1>
+
+<form method="POST" action="{% url group_type_name|concat:"-add"  %}" class="row row-cols-lg-auto g-3 align-items-center mt-4">
+	{% csrf_token %}
+	<div class="col-12">
+		<input type="text" class="form-control" id="name" name="name" placeholder="Name" size="30"/>
+	</div>
+	<div class="col-12">
+		<button type="submit" class="btn btn-primary">Add New</button>
+	</div>
+</form>
+
+<table class="table mt-5 table-hover">
+	<thead class="table-light">
+		<tr>
+			<th scope="col">Name</th>
+			<th scope="col">Edit</th>
+			<th scope="col">Total Elements</th>
+		</tr>
+	</thead>
+	<tbody class="align-middle">
+		{% for group in groups %}
+		<tr>
+				<td class="fs-5"><a href="{% url group_type_name|concat:"-view" group.slug %}">{{ group.name }}</a></td>
+				<td><a class="btn btn-outline-primary" href="{% url group_type_name|concat:"-edit" group.slug %}">Edit</a></td>
+				<td>{{ group.symbols_count }}</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+			
+
+{% endblock %}

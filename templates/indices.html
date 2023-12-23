@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Volume: Indices{% endblock %}
+
+{% block body %}
+
+<h1 class="mt-5">Indices</h1>
+
+<table class="table mt-5 table-hover">
+	<thead class="table-light">
+		<tr>
+			<th scope="col">Name</th>
+			<th scope="col">Slope Chart</th>
+			<th scope="col">Correlation Charts</th>
+			<th scope="col">Historical Data</th>
+			<th scope="col">Weights</th>
+			<th scope="col">Historical Days Pending</th>
+			<th scope="col">Earliest Date</th>
+		</tr>
+	</thead>
+	<tbody class="align-middle">
+		{% for index in indices %}
+		<tr class="{% if not index.active %}table-secondary{% elif index.pending %}table-info{% endif %}">
+				<td class="fs-5"><a href="{% url "index-volume" index.symbol %}">{{ index.display_name }}</a></td>
+				<td><a href="{% url "index-slope" index.symbol %}">Slope</a></td>
+				<td>
+					<a href="{% url "index-correlations-volume" index.symbol %}">Volume</a> | 
+					<a href="{% url "index-correlations-slope" index.symbol %}">Slope</a> | 
+					<a href="{% url "index-correlations-price" index.symbol %}">Price</a>
+				</td>
+				<td><a href="{% url "index-historical" index.symbol %}">Historical Data</a></td>
+				<td><a href="{% url "index-weights" index.symbol %}">Weights</a></td>
+				<td>{{ index.pending }}</td>
+				<td>{{ index.first|date }}</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+			
+
+{% endblock %}

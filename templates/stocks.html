@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Stocks{% endblock %}
+
+{% block body %}
+
+<h1 class="mt-5">Stocks</h1>
+
+<form method="POST" action="{% url "add-stock" %}" class="row row-cols-lg-auto g-3 align-items-center mt-4">
+	{% csrf_token %}
+	<div class="col-12">
+		<input type="text" class="form-control" id="symbol" name="symbol" placeholder="Symbol" size="6"/>
+	</div>
+	<div class="col-12">
+		<button type="submit" class="btn btn-primary">Add</button>
+	</div>
+</form>
+
+<table class="table mt-5 table-hover">
+	<thead class="table-light">
+		<tr>
+			<th scope="col">Symbol</th>
+			<th scope="col">Slope Chart</th>
+			<th scope="col">Correlation Charts</th>
+			<th scope="col">Historical Data</th>
+			<th scope="col">Active</th>
+			<th scope="col">Historical Days Pending</th>
+			<th scope="col">Earliest Date</th>
+		</tr>
+	</thead>
+	<tbody class="align-middle">
+		{% for stock in stocks %}
+		<tr class="{% if not stock.active %}table-secondary{% elif stock.pending %}table-info{% endif %}">
+				<td class="fs-5"><a href="{% url "stock-volume" stock.symbol %}">{{ stock.symbol }}</a></td>
+				<td><a href="{% url "stock-slope" stock.symbol %}">Slope</a></td>
+				<td>
+					<a href="{% url "stock-correlations-volume" stock.symbol %}">Volume</a> | 
+					<a href="{% url "stock-correlations-slope" stock.symbol %}">Slope</a> | 
+					<a href="{% url "stock-correlations-price" stock.symbol %}">Price</a>
+				</td>
+				<td><a href="{% url "stock-historical" stock.symbol %}">Historical Data</a></td>
+				<td>
+					{% if stock.active %}
+						Active
+					{% else %}
+						Inactive
+					{% endif %}
+				</td>
+				<td>{{ stock.pending }}</td>
+				<td>{{ stock.first|date }}</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+			
+
+{% endblock %}

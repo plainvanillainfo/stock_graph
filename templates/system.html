@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Volume: System{% endblock %}
+
+{% block body %}
+
+<h1 class="mt-5">System</h1>
+
+	{% if live_paused %}
+
+		<div class="card bg-warning text-dark mt-3" style="max-width: 30rem;">
+			<div class="card-header">Live Updates</div>
+			<div class="card-body">
+				<h5 class="card-title">Live Updates are paused</h5>
+				<form method="POST" action="{% url "live-updates-start" %}">
+					{% csrf_token %}
+					<button type="submit" class="btn btn-success btn-lg mt-2">Start</button>
+				</form>
+			</div>
+		</div>
+
+	{% else %}
+
+		<div class="card border-primary mt-3" style="max-width: 30rem;">
+			<div class="card-header bg-primary text-white">Live Updates</div>
+			<div class="card-body text-primary">
+				<h5 class="card-title">Live Updates are running</h5>
+				<form method="POST" action="{% url "live-updates-pause" %}">
+					{% csrf_token %}
+					<button type="submit" class="btn btn-outline-warning btn-lg mt-2">Pause</button>
+				</form>
+			</div>
+		</div>
+
+	{% endif %}
+			
+	<div class="card border-primary mt-3" style="max-width: 30rem;" id="api-test-target">
+		<div class="card-header bg-primary text-white">Polygon API Test</div>
+		<div class="card-body text-primary">
+
+			<p class="card-text">
+				<button hx-get="{% url "api-test" %}" hx-target="#api-test-target" hx-swap="outerHTML" hx-indicator="#spinner" class="btn btn-primary btn-lg mt-2">
+					Test API
+				</button>
+				<div id="spinner" class="float-left spinner-border htmx-indicator" role="status">
+					<span class="visually-hidden">Loading...</span>
+				</div>
+			</p>
+
+		</div>
+	</div>
+
+
+{% endblock %}

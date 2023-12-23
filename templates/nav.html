@@ -1,0 +1,42 @@
+{% load concat %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+		<a class="navbar-brand" href="{% url "home" %}">Volume</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+
+				<a class="nav-link" href="{% url "stocks" %}">Stocks</a>
+				<a class="nav-link me-5" href="{% url "indices" %}">Indices</a>
+
+				{% for group_type_name, group_dict in nav_groups.items %}
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+							{{ group_dict.title }}s
+						</a>
+						<ul class="dropdown-menu">
+							<li><a class="dropdown-item" href="{% url group_type_name|concat:"-view" "all" %}">All</a></li>
+							{% if group_dict.groups %}
+								<li><hr class="dropdown-divider"></li>
+							{% endif %}
+							{% for group in group_dict.groups %}
+								<li><a class="dropdown-item" href="{% url group_type_name|concat:"-view" group.slug %}">{{ group.name }}</a></li>
+							{% endfor %}
+							<li><hr class="dropdown-divider"></li>
+							<li><a class="dropdown-item text-secondary" href="{% url group_type_name|concat:"-home" %}">List</a></li>
+						</ul>
+					</li>
+				{% endfor %}
+
+				{% if live_paused %}
+				<a class="btn btn-warning rounded-pill ms-5" href="{% url "system" %}">Live Updates Paused</a>
+				{% else %}
+				<a class="nav-link ms-5" href="{% url "system" %}">System</a>
+				{% endif %}
+
+      </div>
+    </div>
+  </div>
+</nav>

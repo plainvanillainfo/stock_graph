@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ chart_name }}: {% if is_today %}Today{% else %}{{ start|date:"Y-m-d" }} - {{ day|date:"Y-m-d" }}{% endif %}{% endblock %}
+
+{% block head %}
+
+{{ data|json_script:"plot_data" }}
+{{ trace_indices|json_script:"trace_indices" }}
+{{ plot_type|json_script:"plot_type" }}
+
+<script>
+	const PLOT_TARGET = 'plot-target';
+	const CHANNEL = 'all';
+	{% if is_today %}
+	const LIVE = true;
+	{% else %}
+	const LIVE = false;
+	{% endif %}
+
+	window.onload = function(elt) {
+		var data = JSON.parse(document.getElementById('plot_data').textContent);
+
+		var layout = {
+			hovermode: 'x',
+			xaxis: {
+				type: 'date',
+				showspikes: true,
+				spikedash: 'solid',
+				spikemode: 'across+marker',
+				spikethickness: 1,
+				spikesnap: 'cursor',
+				spikecolor: '#222222',
+				rangebreaks: [
+					{
+						pattern: 'hour',
+						bounds: [17, 9],
+					},
+					{
+						pattern: 'day of week',
+						bounds: [6, 1],
+					},
+				],
+				range: ['{{ start }} 09:00:00', '{{ end }} 00:00:00'],
+			},
+			yaxis: {
+				autorange: true,
+				type: 'linear',
+			},
+			showlegend: true,
+		};
+
+		chart = Plotly.newPlot(PLOT_TARGET, data, layout, {responsive: true});
+	};
+
+
+</script>
+
+<script src="{% static "live.js" %}"></script>
+
+{% endblock %}
+
+{% block main %}
+
+{% include "holiday.html" %}
+
+<div class="container-fluid">
+
+	<div id="main-target" class="h-100 position-fixed overflow-hidden">
+		{% include "date_select.html" %}
+		<div id="plot-target"></div>
+	</div>
+
+</div>
+
+{% endblock %}

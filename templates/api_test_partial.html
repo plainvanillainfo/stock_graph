@@ -1,0 +1,30 @@
+
+{% if success %}
+
+	<div class="card bg-success text-white mt-3" style="max-width: 30rem;" id="api-test-target">
+		<div class="card-header">Polygon API Test: Success</div>
+		<div class="card-body">
+			<h5 class="card-title">API is working normally</h5>
+
+{% else %}
+
+	<div class="card bg-danger text-white mt-3" style="max-width: 30rem;" id="api-test-target">
+		<div class="card-header">Polygon API Test: Error</div>
+		<div class="card-body">
+			<h5 class="card-title">{{ status }}</h5>
+			<p class="card-text">{{ message }}</p>
+
+
+{% endif %}
+
+			<p class="card-text">
+				<button hx-get="{% url "api-test" %}" hx-target="#api-test-target" hx-swap="outerHTML" hx-indicator="#spinner" class="btn btn-primary btn-lg mt-2">
+					Test API
+				</button>
+				<div id="spinner" class="float-left spinner-border htmx-indicator" role="status">
+					<span class="visually-hidden">Loading...</span>
+				</div>
+			</p>
+
+		</div>
+	</div>

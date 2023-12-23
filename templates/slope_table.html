@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Slope Table: {% if is_today %}Today{% else %}{{ day|date:"Y-m-d" }}{% endif %}{% endblock %}
+
+{% block head %}
+	<script>
+		{% if is_today %}
+		const LIVE = true;
+		{% else %}
+		const LIVE = false;
+		{% endif %}
+	</script>
+
+{% endblock %}
+
+{% block body %}
+
+{% include "holiday.html" %}
+
+<h1 class="mt-3 mb-3">Slope Table ({{ table_name }}): {% if is_today %}Today{% else %}{{ day|date:"Y-m-d" }}{% endif %}</h1>
+
+{% include "date_select.html" %}
+
+
+<div class="row" {% if is_today %}hx-ext="ws" ws-connect="/volume_ws?channel=slope_table_{{ slug }}"{% endif %}>
+
+	<div class="col">
+
+		{% include "slope_table_table.html" %}
+
+	</div>
+
+</div>
+
+{% endblock %}

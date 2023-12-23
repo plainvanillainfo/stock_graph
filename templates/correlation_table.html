@@ -1,0 +1,23 @@
+<table class="table mt-3 table-hover correlations-table sortable asc" id="{{ table_id }}">
+	<colgroup>
+		<col class="col-md-4">
+		<col class="col-md-4">
+		<col class="col-md-4">
+	</colgroup>
+	<thead class="table-light">
+		<tr>
+			<th scope="col" class="align-middle">Symbol</th>
+			<th scope="col" class="align-middle">Previous Value ({{ previous_day|date:"Y-m-d" }})</th>
+			<th scope="col" class="align-middle">Current Value ({{ day|date:"Y-m-d" }})</th>
+		</tr>
+	</thead>
+	<tbody class="align-middle">
+		{% for symbol, data in correlations.items %}
+		<tr>
+			<td><a href="{% url url symbol %}{% if not is_today %}?latest_day={{ day|date:"Y-m-d" }}{% endif %}">{{ data.display_name }}</a></td>
+			<td class="table-primary text-end">{{ data.previous|floatformat:2 }}</td>
+			<td class="table-success text-end">{{ data.today|floatformat:2 }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>

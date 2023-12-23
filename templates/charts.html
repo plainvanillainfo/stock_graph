@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Volume: Charts{% endblock %}
+
+{% block body %}
+
+<h1 class="mt-5">Charts</h1>
+
+<form method="POST" action="{% url "add-chart" %}" class="row row-cols-lg-auto g-3 align-items-center mt-4">
+	{% csrf_token %}
+	<div class="col-12">
+		<input type="text" class="form-control" id="name" name="name" placeholder="Name" size="30"/>
+	</div>
+	<div class="col-12">
+		<button type="submit" class="btn btn-primary">Add New</button>
+	</div>
+</form>
+
+<table class="table mt-5 table-hover">
+	<thead class="table-light">
+		<tr>
+			<th scope="col">Name</th>
+			<th scope="col">Edit</th>
+			<th scope="col">Total Elements</th>
+		</tr>
+	</thead>
+	<tbody class="align-middle">
+		{% for chart in charts %}
+		<tr>
+				<td class="fs-5"><a href="{% url "chart" chart.slug %}">{{ chart.name }}</a></td>
+				<td><a class="btn btn-outline-primary" href="{% url "chart-edit" chart.slug %}">Edit</a></td>
+				<td>{{ chart.symbols_count }}</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+			
+
+{% endblock %}
